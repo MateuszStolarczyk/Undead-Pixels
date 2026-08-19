@@ -310,7 +310,6 @@
             gap: 4px;
         }
 
-        /* Logo nad napisem */
         .hero-top-logo {
             max-width: min(40vw, 260px);
             width: 100%;
@@ -321,6 +320,7 @@
         }
 
         .hero h1 .studio-name {
+            line-height: normal;
             background: linear-gradient(135deg, var(--accent), #8fd42a, var(--accent));
             background-size: 200% 200%;
             -webkit-background-clip: text;
@@ -329,6 +329,7 @@
             animation: shimmer 5s ease-in-out infinite;
             text-shadow: 0 0 80px rgba(184, 255, 61, 0.06);
             display: inline-block;
+            padding: 0 12px; /* <-- DODANE: Zapewnia miejsce na cień po bokach */
         }
 
         @keyframes shimmer {
@@ -466,79 +467,88 @@
             box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
         }
 
-        .game-card .card-header {
-            padding: 24px 24px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            border-bottom: 1px solid var(--border);
-            min-height: 80px;
+        /* ===== KARTA ZOMBASE – OBRAZEK + TAGI ===== */
+        .game-card-link {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            transition: transform 0.35s, border-color 0.35s, box-shadow 0.35s;
         }
 
-        .game-card .card-header .title-group h3 {
-            font-size: 22px;
+        .game-card-link:hover {
+            transform: translateY(-6px);
+            border-color: rgba(184, 255, 61, 0.18);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+        }
+
+        .game-card-link img {
+            width: 100%;
+            height: auto;
+            display: block;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+            background: #14181e;
+        }
+
+        .game-card-link .card-label {
+            padding: 16px 20px 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: none;
+        }
+
+        .game-card-link .card-label .title-group h3 {
+            font-size: 20px;
             font-weight: 800;
             letter-spacing: -0.02em;
         }
 
-        .game-card .card-header .title-group .genre {
+        .game-card-link .card-label .title-group .genre {
             font-size: 12px;
             color: var(--muted);
             font-weight: 600;
             letter-spacing: 0.04em;
-            margin-top: 2px;
         }
 
-        .game-card .badge {
+        .game-card-link .badge {
             padding: 4px 14px;
             border-radius: 999px;
             font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.06em;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
-        .badge-dev {
             background: rgba(184, 255, 61, 0.12);
             color: var(--accent);
             border: 1px solid rgba(184, 255, 61, 0.15);
+            flex-shrink: 0;
         }
 
-        .badge-future {
-            background: rgba(255, 255, 255, 0.04);
+        .game-card-link .card-label .arrow {
+            font-size: 20px;
             color: var(--muted);
-            border: 1px solid var(--border);
+            transition: transform 0.3s, color 0.3s;
+            margin-left: 12px;
         }
 
-        .game-card .card-body {
-            padding: 20px 24px 24px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
+        .game-card-link:hover .card-label .arrow {
+            transform: translateX(6px);
+            color: var(--accent);
         }
 
-        .game-card .card-body p {
-            color: var(--muted);
-            font-size: 15px;
-            line-height: 1.75;
-        }
-
-        .game-card .card-body p strong {
-            color: var(--text);
-            font-weight: 700;
-        }
-
-        .game-card .card-body .feature-tags {
+        /* ===== TAGI NA KARCIE ===== */
+        .game-card-link .card-tags {
+            padding: 8px 20px 16px 20px;
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
-            margin-top: 4px;
         }
 
-        .game-card .card-body .feature-tags span {
+        .game-card-link .card-tags span {
             padding: 2px 12px;
             border-radius: 999px;
             border: 1px solid var(--border);
@@ -548,75 +558,9 @@
             background: rgba(255, 255, 255, 0.02);
         }
 
-        .game-card .card-body .feature-tags span.accent-tag {
+        .game-card-link .card-tags span.accent-tag {
             border-color: rgba(184, 255, 61, 0.20);
             color: var(--accent);
-        }
-
-        .game-card .card-footer {
-            padding: 14px 24px 20px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .game-card .card-footer .status {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--muted);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .game-card .card-footer .status .dot-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .dot-indicator.green {
-            background: var(--accent);
-            box-shadow: 0 0 12px var(--accent-glow);
-        }
-        .dot-indicator.blue {
-            background: var(--accent-2);
-            box-shadow: 0 0 12px rgba(112, 214, 255, 0.20);
-        }
-        .dot-indicator.gray {
-            background: var(--muted);
-        }
-
-        .game-card .card-footer .btn-sm {
-            padding: 6px 18px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text);
-            background: rgba(255, 255, 255, 0.04);
-            text-decoration: none;
-            transition: background 0.25s, border-color 0.25s;
-        }
-
-        .game-card .card-footer .btn-sm:hover {
-            background: rgba(184, 255, 61, 0.06);
-            border-color: rgba(184, 255, 61, 0.25);
-        }
-
-        .game-card .card-footer .btn-sm.primary-sm {
-            background: var(--accent);
-            color: #0a0c10;
-            border-color: var(--accent);
-        }
-
-        .game-card .card-footer .btn-sm.primary-sm:hover {
-            background: #c8ff62;
-            border-color: #c8ff62;
         }
 
         /* ===== FUTURE GAMES PLACEHOLDER ===== */
@@ -869,18 +813,12 @@
             .team-grid {
                 grid-template-columns: 1fr;
             }
-            .game-card .card-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-            .game-card .card-footer {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
             .hero-top-logo {
                 max-width: 60vw;
+            }
+            .game-card-link .card-label {
+                flex-wrap: wrap;
+                gap: 8px;
             }
         }
 
@@ -928,11 +866,10 @@
             <div class="hero-inner">
                 <div class="hero-badge">
                     <span class="dot"></span>
-                    Independent studio
+                    Indie Studio
                 </div>
 
                 <h1>
-                    <!-- Logo nad napisem -->
                     <img src="logo.png" alt="Udead Pixels" class="hero-top-logo" />
                     <span class="studio-name">Udead Pixels</span>
                     <span class="sub">games built from pixels, code &amp; enthusiasm</span>
@@ -1005,81 +942,59 @@
 
             <div class="games-grid">
 
-                <!-- ZomBASE – featured game -->
-                <div class="game-card">
-                    <div class="card-header">
+                <!-- ===== ZomBASE – karta z obrazkiem, tagami i linkiem ===== -->
+                <a href="zombase.html" class="game-card-link">
+                    <img src="zombase_cover.png" alt="ZomBASE – survival base building" />
+                    <div class="card-label">
                         <div class="title-group">
                             <h3>ZomBASE</h3>
                             <div class="genre">Survival · Base building · Action</div>
                         </div>
-                        <span class="badge badge-dev">In development</span>
-                    </div>
-                    <div class="card-body">
-                        <p>
-                            <strong>You are a fugitive fleeing the zombie apocalypse.</strong> Your plane crashes
-                            on a remote, uncharted island — a place that should be deserted, yet something feels
-                            off. As the sole survivor, you must fight to stay alive, build a base from scraps,
-                            and uncover the island's dark secrets. But survival is just the beginning:
-                            the key to stopping the outbreak lies somewhere on this island.
-                            Can you find it before the zombies — and the island itself — consume you?
-                        </p>
-                        <p style="font-size:14px; color:var(--muted);">
-                            With an <strong style="color:var(--text);">infinite defense mode</strong> that
-                            pushes your limits and a <strong style="color:var(--text);">SandBox mode</strong>
-                            that gives you creative freedom, ZomBASE delivers a survival experience
-                            that keeps you coming back.
-                        </p>
-                        <div class="feature-tags">
-                            <span>🏗️ base building</span>
-                            <span>🧟 zombie hordes</span>
-                            <span>📦 resource management</span>
-                            <span>👥 survivors</span>
-                            <span>🗺️ exploration</span>
-                            <span class="accent-tag">♾️ infinite defense</span>
-                            <span class="accent-tag">🧪 SandBox mode</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span class="badge">In development</span>
+                            <span class="arrow">→</span>
                         </div>
                     </div>
-                    <div class="card-footer">
-                        <span class="status">
-                            <span class="dot-indicator green"></span>
-                            Active development · 2026
-                        </span>
-                        <a href="#contact" class="btn-sm primary-sm">Follow progress</a>
+                    <!-- ===== TAGI ===== -->
+                    <div class="card-tags">
+                        <span>🏗️ base building</span>
+                        <span>🧟 zombie hordes</span>
+                        <span>📦 resource management</span>
+                        <span>👥 survivors</span>
+                        <span>🗺️ exploration</span>
+                        <span class="accent-tag">♾️ infinite defense</span>
+                        <span class="accent-tag">🧪 SandBox mode</span>
                     </div>
-                </div>
+                </a>
 
-                <!-- Future game placeholder #1 -->
-                <div class="game-card" style="opacity:0.7;">
-                    <div class="card-header">
-                        <div class="title-group">
-                            <h3 style="color:var(--muted);">—</h3>
-                            <div class="genre">Untitled · TBA</div>
-                        </div>
-                        <span class="badge badge-future">Coming later</span>
-                    </div>
-                    <div class="card-body">
-                        <p style="color:var(--muted);">
-                            After ZomBASE ships, we'll start exploring new ideas.
-                            This slot is reserved for our next project — stay tuned.
-                        </p>
-                        <div class="feature-tags">
-                            <span style="opacity:0.4;">❓</span>
-                            <span style="opacity:0.4;">❓</span>
-                            <span style="opacity:0.4;">❓</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <span class="status">
-                            <span class="dot-indicator gray"></span>
-                            On hold · after ZomBASE
-                        </span>
-                        <span class="btn-sm" style="opacity:0.4; cursor:default; pointer-events:none;">TBA</span>
-                    </div>
-                </div>
+                <!-- ===== Future game placeholder ===== -->
+                <!-- ===== Future game placeholder – spójny wygląd ===== -->
+				<div class="game-card-link" style="opacity:0.7; cursor:default; pointer-events:none; border-style:dashed; border-color:rgba(255,255,255,0.05);">
+					<div style="aspect-ratio:16/9; background:#14181e; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:48px; opacity:0.3;">
+						❓
+					</div>
+					<div class="card-label">
+						<div class="title-group">
+							<h3 style="color:var(--muted);">—</h3>
+							<div class="genre">Untitled · TBA</div>
+						</div>
+						<span class="badge badge-future">Coming later</span>
+					</div>
+					<div class="card-tags">
+						<span style="opacity:0.4;">❓</span>
+						<span style="opacity:0.4;">❓</span>
+						<span style="opacity:0.4;">❓</span>
+					</div>
+					<div style="padding: 10px 20px 16px 20px; border-top: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+						<span class="status">
+							<span class="dot-indicator gray"></span>
+							On hold · after ZomBASE
+						</span>
+						<span class="btn-sm" style="opacity:0.4; cursor:default; pointer-events:none;">TBA</span>
+					</div>
+				</div>
 
-            </div>
-
-            <!-- Future note -->
+            <!-- ===== Future note ===== -->
             <div class="future-note">
                 <strong>🔮 First ZomBASE, then the rest.</strong>
                 &nbsp; We're not planning any other games until
