@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0a0c10" />
+    <meta name="description" content="ZomBASE – survival base building game by Udead Pixels." />
+    <title>ZomBASE · Udead Pixels</title>
+
+    <link rel="icon" href="logo.png" type="image/png" />
+    <link rel="apple-touch-icon" href="logo.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ===== RESET & VARIABLES ===== */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0a0c10;
+            --bg-card: rgba(18, 22, 28, 0.80);
+            --text: #edf0f5;
+            --muted: #9aa4b5;
+            --accent: #b8ff3d;
+            --accent-glow: rgba(184, 255, 61, 0.15);
+            --accent-2: #70d6ff;
+            --border: rgba(255, 255, 255, 0.07);
+            --radius: 20px;
+            --shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+            --transition: 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(184, 255, 61, 0.06), transparent 45%),
+                radial-gradient(circle at 80% 70%, rgba(112, 214, 255, 0.04), transparent 40%),
+                var(--bg);
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.10;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: radial-gradient(ellipse at 50% 40%, black 30%, transparent 75%);
+            -webkit-mask-image: radial-gradient(ellipse at 50% 40%, black 30%, transparent 75%);
+        }
+
+        .cursor-glow {
+            position: fixed;
+            width: 360px;
+            height: 360px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            background: radial-gradient(circle, rgba(184, 255, 61, 0.07), transparent 65%);
+            transform: translate(-50%, -50%);
+            transition: opacity 0.2s;
+            will-change: left, top;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 5vw;
+            background: rgba(10, 12, 16, 0.50);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid transparent;
+            transition: padding 0.3s, background 0.3s, border-color 0.3s;
+        }
+
+        header.scrolled {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            background: rgba(10, 12, 16, 0.82);
+            border-bottom-color: var(--border);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 18px;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .brand-logo {
+            height: 40px;
+            width: auto;
+            flex-shrink: 0;
+            border-radius: 10px;
+            display: block;
+            object-fit: contain;
+        }
+
+        .brand span {
+            background: linear-gradient(to right, var(--text), #c8cdd6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        nav {
+            display: flex;
+            gap: 28px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        nav a {
+            color: var(--muted);
+            text-decoration: none;
+            transition: color 0.25s;
+            position: relative;
+        }
+
+        nav a::after {
+            content: "";
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s;
+            border-radius: 2px;
+        }
+
+        nav a:hover {
+            color: var(--text);
+        }
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .nav-highlight {
+            color: var(--accent) !important;
+        }
+        .nav-highlight::after {
+            width: 100% !important;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        main {
+            position: relative;
+            z-index: 1;
+            padding-top: 100px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
+        }
+
+        .game-header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            align-items: flex-start;
+            margin-bottom: 50px;
+        }
+
+        .game-header .cover {
+            flex: 1 1 400px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: #14181e;
+        }
+
+        .game-header .cover img {
+            width: 100%;
+            height: auto;
+            display: block;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+        }
+
+        .game-header .info {
+            flex: 1 1 400px;
+        }
+
+        .game-header .info .badge {
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            background: rgba(184, 255, 61, 0.12);
+            color: var(--accent);
+            border: 1px solid rgba(184, 255, 61, 0.15);
+            margin-bottom: 12px;
+        }
+
+        .game-header .info h1 {
+            font-size: clamp(36px, 6vw, 56px);
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            line-height: 1.05;
+            margin-bottom: 8px;
+        }
+
+        .game-header .info .genre {
+            font-size: 16px;
+            color: var(--muted);
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .game-header .info .description {
+            color: var(--muted);
+            font-size: 17px;
+            line-height: 1.8;
+            margin-bottom: 24px;
+        }
+
+        .game-header .info .description strong {
+            color: var(--text);
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 32px;
+            border-radius: 14px;
+            background: var(--accent);
+            color: #0a0c10;
+            font-weight: 800;
+            font-size: 16px;
+            border: none;
+            text-decoration: none;
+            transition: transform 0.25s, box-shadow 0.25s;
+            cursor: pointer;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(184, 255, 61, 0.25);
+            background: #c8ff62;
+        }
+
+        /* ===== SCREENSHOTS ===== */
+        .screenshots {
+            margin-top: 60px;
+        }
+
+        .screenshots h2 {
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            margin-bottom: 12px;
+        }
+
+        .screenshots .sub {
+            color: var(--muted);
+            margin-bottom: 28px;
+        }
+
+        .screenshot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .screenshot-grid .item {
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: #14181e;
+            aspect-ratio: 16 / 9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+            font-size: 14px;
+            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .screenshot-grid .item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+
+        .screenshot-grid .item:hover {
+            transform: scale(1.03);
+            border-color: rgba(184, 255, 61, 0.25);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .screenshot-grid .item:hover img {
+            transform: scale(1.04);
+        }
+
+        .screenshot-grid .item .zoom-hint {
+            position: absolute;
+            bottom: 12px;
+            right: 14px;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            color: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .screenshot-grid .item:hover .zoom-hint {
+            opacity: 1;
+        }
+
+        .screenshot-grid .item.placeholder {
+            background: rgba(255, 255, 255, 0.02);
+            border-style: dashed;
+            border-color: rgba(255, 255, 255, 0.05);
+            color: #4a5260;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            cursor: default;
+        }
+
+        .screenshot-grid .item.placeholder:hover {
+            transform: none;
+            border-color: rgba(255, 255, 255, 0.05);
+            box-shadow: none;
+        }
+
+        .screenshot-grid .item.placeholder img {
+            object-fit: contain;
+            opacity: 0.5;
+        }
+
+        /* ===== LIGHTBOX / MODAL ===== */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+            padding: 30px;
+            cursor: zoom-out;
+        }
+
+        .lightbox.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lightbox .lightbox-content {
+            position: relative;
+            max-width: 92vw;
+            max-height: 90vh;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
+            transform: scale(0.92) translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+            opacity: 0;
+            cursor: default;
+            background: #14181e;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .lightbox.open .lightbox-content {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        .lightbox .lightbox-content img {
+            display: block;
+            width: auto;
+            height: auto;
+            max-width: 92vw;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+
+        .lightbox .lightbox-close {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #fff;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 22px;
+            font-weight: 300;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.25s, transform 0.25s;
+            z-index: 10;
+            line-height: 1;
+        }
+
+        .lightbox .lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: rotate(90deg);
+        }
+
+        .lightbox .lightbox-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            pointer-events: none;
+            letter-spacing: 0.03em;
+        }
+
+        .lightbox .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #fff;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            font-size: 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.25s, transform 0.2s;
+            user-select: none;
+            z-index: 10;
+        }
+
+        .lightbox .lightbox-nav:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .lightbox .lightbox-nav.prev {
+            left: 16px;
+        }
+
+        .lightbox .lightbox-nav.next {
+            right: 16px;
+        }
+
+        .lightbox .lightbox-nav.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @media (max-width: 600px) {
+            .lightbox .lightbox-nav {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+            .lightbox .lightbox-nav.prev {
+                left: 8px;
+            }
+            .lightbox .lightbox-nav.next {
+                right: 8px;
+            }
+            .lightbox .lightbox-close {
+                top: 12px;
+                right: 14px;
+                width: 38px;
+                height: 38px;
+                font-size: 18px;
+            }
+            .lightbox {
+                padding: 14px;
+            }
+            .lightbox .lightbox-content img {
+                max-width: 96vw;
+                max-height: 88vh;
+            }
+            .screenshot-grid .item .zoom-hint {
+                display: none;
+            }
+        }
+
+        /* ===== BACK LINK ===== */
+        .back-link {
+            display: inline-block;
+            margin-top: 40px;
+            color: var(--muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--text);
+        }
+
+        .back-link span {
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+
+        .back-link:hover span {
+            transform: translateX(-4px);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 22px 5vw;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            color: #6b7482;
+            font-size: 13px;
+            position: relative;
+            z-index: 1;
+        }
+
+        footer a {
+            color: var(--muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        footer a:hover {
+            color: var(--text);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 700px) {
+            header {
+                padding: 14px 16px;
+            }
+            nav {
+                gap: 16px;
+                font-size: 13px;
+            }
+            nav a::after {
+                display: none;
+            }
+            .game-header {
+                flex-direction: column;
+            }
+            .game-header .cover {
+                flex: 1 1 auto;
+            }
+            .screenshot-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            nav {
+                gap: 10px;
+                font-size: 12px;
+            }
+            .brand {
+                font-size: 15px;
+                gap: 8px;
+            }
+            .brand-logo {
+                height: 28px;
+            }
+            .download-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .screenshot-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== CURSOR GLOW ===== -->
+    <div class="cursor-glow" id="glow"></div>
+
+    <!-- ===== HEADER ===== -->
+    <header id="header">
+        <a class="brand" href="index.html">
+            <img src="logo.png" alt="Udead Pixels" class="brand-logo" />
+            <span>Udead Pixels</span>
+        </a>
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="index.html#games" class="nav-highlight">Games</a>
+            <a href="index.html#team">Team</a>
+            <a href="index.html#contact">Contact</a>
+        </nav>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main>
+        <div class="container">
+
+            <!-- ===== GAME HEADER ===== -->
+            <div class="game-header">
+                <div class="cover">
+                    <img src="zombase_cover.png" alt="ZomBASE cover" />
+                </div>
+                <div class="info">
+                    <span class="badge">In development</span>
+                    <h1>ZomBASE</h1>
+                    <div class="genre">Survival · Base building · Action</div>
+                    <div class="description">
+                        <p>
+                            <strong>You are a fugitive fleeing the zombie apocalypse.</strong> Your plane crashes
+                            on a remote, uncharted island — a place that should be deserted, yet something feels
+                            off. As the sole survivor, you must fight to stay alive, build a base from scraps,
+                            and uncover the island's dark secrets. But survival is just the beginning:
+                            the key to stopping the outbreak lies somewhere on this island.
+                            Can you find it before the zombies — and the island itself — consume you?
+                        </p>
+                        <p style="margin-top: 16px;">
+                            With an <strong>infinite defense mode</strong> that pushes your limits and a
+                            <strong>SandBox mode</strong> that gives you creative freedom, ZomBASE delivers
+                            a survival experience that keeps you coming back.
+                        </p>
+                    </div>
+
+                    <a href="zombase/download/zombase_pre-alpha0.1.exe" class="download-btn" download>
+                        Download ZomBASE (Pre-Alpha)
+                    </a>
+                </div>
+            </div>
+
+            <!-- ===== SCREENSHOTS ===== -->
+            <div class="screenshots">
+                <h2>Screenshots</h2>
+                <p class="sub">Click any screenshot to expand — explore the island up close.</p>
+
+                <div class="screenshot-grid" id="screenshotGrid">
+                    <!-- Screenshot 1 -->
+                    <div class="item" data-index="0">
+                        <img src="zombase/screanshots/ZB_1.png" alt="ZomBASE screenshot 1" loading="lazy" />
+                        <span class="zoom-hint">⤓ Click to zoom</span>
+                    </div>
+                    <!-- Screenshot 2 -->
+                    <div class="item" data-index="1">
+                        <img src="zombase/screanshots/ZB_2.png" alt="ZomBASE screenshot 2" loading="lazy" />
+                        <span class="zoom-hint">⤓ Click to zoom</span>
+                    </div>
+                    <!-- Screenshot 3 -->
+                    <div class="item" data-index="2">
+                        <img src="zombase/screanshots/ZB_3.png" alt="ZomBASE screenshot 3" loading="lazy" />
+                        <span class="zoom-hint">⤓ Click to zoom</span>
+                    </div>
+                    <!-- Screenshot 4 -->
+                    <div class="item" data-index="3">
+                        <img src="zombase/screanshots/ZB_4.png" alt="ZomBASE screenshot 4" loading="lazy" />
+                        <span class="zoom-hint">⤓ Click to zoom</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== BACK LINK ===== -->
+            <a href="index.html" class="back-link">
+                <span>←</span> Back to homepage
+            </a>
+
+        </div>
+    </main>
+
+    <!-- ===== LIGHTBOX ===== -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
+        <div class="lightbox-content" id="lightboxContent">
+            <img id="lightboxImg" src="" alt="Expanded screenshot" />
+            <button class="lightbox-close" id="lightboxClose" aria-label="Close image viewer">✕</button>
+            <button class="lightbox-nav prev" id="lightboxPrev" aria-label="Previous image">‹</button>
+            <button class="lightbox-nav next" id="lightboxNext" aria-label="Next image">›</button>
+            <div class="lightbox-counter" id="lightboxCounter"></div>
+        </div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <span>© 2026 <a href="index.html">Udead Pixels</a></span>
+        <span>
+            <a href="index.html#games">Games</a> ·
+            <a href="index.html#team">Team</a> ·
+            <a href="index.html#contact">Contact</a>
+        </span>
+        <span>Indie game studio</span>
+    </footer>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            // --- Header scroll ---
+            const header = document.getElementById('header');
+            window.addEventListener('scroll', () => {
+                header.classList.toggle('scrolled', window.scrollY > 20);
+            }, { passive: true });
+
+            // --- Cursor glow ---
+            const glow = document.getElementById('glow');
+            let glowTimeout;
+            window.addEventListener('pointermove', (e) => {
+                glow.style.left = e.clientX + 'px';
+                glow.style.top = e.clientY + 'px';
+                glow.style.opacity = '1';
+                clearTimeout(glowTimeout);
+            }, { passive: true });
+            window.addEventListener('pointerleave', () => {
+                glowTimeout = setTimeout(() => {
+                    glow.style.opacity = '0';
+                }, 300);
+            }, { passive: true });
+
+            // --- LIGHTBOX ---
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            const lightboxClose = document.getElementById('lightboxClose');
+            const lightboxPrev = document.getElementById('lightboxPrev');
+            const lightboxNext = document.getElementById('lightboxNext');
+            const lightboxCounter = document.getElementById('lightboxCounter');
+
+            // Collect all screenshot items that have an image (skip placeholders without img)
+            const items = Array.from(document.querySelectorAll('.screenshot-grid .item'));
+            const imageItems = items.filter(item => item.querySelector('img') !== null);
+            const imageSources = imageItems.map(item => item.querySelector('img').src);
+            const imageAlts = imageItems.map(item => item.querySelector('img').alt || 'Screenshot');
+
+            let currentIndex = 0;
+            let isOpen = false;
+
+            function openLightbox(index) {
+                if (imageSources.length === 0) return;
+                currentIndex = Math.min(Math.max(index, 0), imageSources.length - 1);
+                lightboxImg.src = imageSources[currentIndex];
+                lightboxImg.alt = imageAlts[currentIndex] || 'Screenshot';
+                updateCounter();
+                updateNavButtons();
+                lightbox.classList.add('open');
+                isOpen = true;
+                document.body.style.overflow = 'hidden';
+                // Preload adjacent images
+                preloadAdjacent();
+            }
+
+            function closeLightbox() {
+                lightbox.classList.remove('open');
+                isOpen = false;
+                document.body.style.overflow = '';
+                // Delay clearing src to avoid flash
+                setTimeout(() => {
+                    if (!isOpen) {
+                        // keep src for smooth transition
+                    }
+                }, 300);
+            }
+
+            function goTo(index) {
+                if (index < 0 || index >= imageSources.length) return;
+                currentIndex = index;
+                lightboxImg.src = imageSources[currentIndex];
+                lightboxImg.alt = imageAlts[currentIndex] || 'Screenshot';
+                updateCounter();
+                updateNavButtons();
+                preloadAdjacent();
+            }
+
+            function goPrev() {
+                if (currentIndex > 0) goTo(currentIndex - 1);
+            }
+
+            function goNext() {
+                if (currentIndex < imageSources.length - 1) goTo(currentIndex + 1);
+            }
+
+            function updateCounter() {
+                if (imageSources.length > 1) {
+                    lightboxCounter.textContent = `${currentIndex + 1} / ${imageSources.length}`;
+                    lightboxCounter.style.display = 'block';
+                } else {
+                    lightboxCounter.style.display = 'none';
+                }
+            }
+
+            function updateNavButtons() {
+                lightboxPrev.classList.toggle('hidden', currentIndex === 0);
+                lightboxNext.classList.toggle('hidden', currentIndex === imageSources.length - 1);
+            }
+
+            function preloadAdjacent() {
+                // Preload next and previous images for smoother navigation
+                const indices = [currentIndex - 1, currentIndex + 1];
+                indices.forEach(i => {
+                    if (i >= 0 && i < imageSources.length) {
+                        const img = new Image();
+                        img.src = imageSources[i];
+                    }
+                });
+            }
+
+            // --- Event listeners ---
+
+            // Click on screenshot item
+            imageItems.forEach((item, idx) => {
+                item.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openLightbox(idx);
+                });
+            });
+
+            // Close on overlay click (click on lightbox background)
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) {
+                    closeLightbox();
+                }
+            });
+
+            // Close button
+            lightboxClose.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeLightbox();
+            });
+
+            // Navigation buttons
+            lightboxPrev.addEventListener('click', (e) => {
+                e.stopPropagation();
+                goPrev();
+            });
+
+            lightboxNext.addEventListener('click', (e) => {
+                e.stopPropagation();
+                goNext();
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (!isOpen) return;
+                if (e.key === 'Escape') {
+                    closeLightbox();
+                    e.preventDefault();
+                } else if (e.key === 'ArrowLeft') {
+                    goPrev();
+                    e.preventDefault();
+                } else if (e.key === 'ArrowRight') {
+                    goNext();
+                    e.preventDefault();
+                }
+            });
+
+            // Touch swipe support for mobile
+            let touchStartX = 0;
+            let touchStartY = 0;
+            lightbox.addEventListener('touchstart', (e) => {
+                const touch = e.touches[0];
+                touchStartX = touch.clientX;
+                touchStartY = touch.clientY;
+            }, { passive: true });
+
+            lightbox.addEventListener('touchmove', (e) => {
+                if (!isOpen) return;
+                const touch = e.touches[0];
+                const deltaX = touch.clientX - touchStartX;
+                const deltaY = touch.clientY - touchStartY;
+                // Only trigger if horizontal swipe is dominant
+                if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 40) {
+                    if (deltaX > 0) {
+                        goPrev();
+                    } else {
+                        goNext();
+                    }
+                    touchStartX = touch.clientX;
+                    touchStartY = touch.clientY;
+                }
+            }, { passive: true });
+
+            // Prevent lightbox content click from closing
+            document.getElementById('lightboxContent').addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+
+            // --- Handle broken images gracefully ---
+            lightboxImg.addEventListener('error', () => {
+                lightboxImg.src = '';
+                lightboxImg.alt = 'Image could not be loaded';
+            });
+
+            // --- Close lightbox when window resizes beyond a threshold? Not needed, but ensure it stays responsive.
+
+            console.log('🔍 ZomBASE lightbox ready — click screenshots to zoom!');
+        })();
+    </script>
+
+</body>
+</html>
