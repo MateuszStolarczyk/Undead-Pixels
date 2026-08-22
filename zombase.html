@@ -10,9 +10,13 @@
     <link rel="icon" href="logo.png" type="image/png" />
     <link rel="apple-touch-icon" href="logo.png" />
 
+    <!-- Fonts: loaded asynchronously to prevent blocking -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" />
+    </noscript>
 
     <style>
         /* ===== RESET & VARIABLES ===== */
@@ -602,6 +606,92 @@
             color: var(--text);
         }
 
+        /* ===== DOWNLOAD TABLE ===== */
+        #downloads {
+            margin-top: 60px;
+            padding: 20px;
+            background: rgba(18, 22, 28, 0.60);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        #downloads h2 {
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        #downloads .sub {
+            color: var(--muted);
+            margin-bottom: 24px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.25);
+        }
+
+        #versions-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+            color: var(--text);
+        }
+
+        #versions-table thead {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        #versions-table th {
+            padding: 14px 18px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--muted);
+            border-bottom: 1px solid var(--border);
+        }
+
+        #versions-table td {
+            padding: 14px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        #versions-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        #versions-table tbody tr:hover {
+            background: rgba(184, 255, 61, 0.03);
+        }
+
+        #versions-table a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s, text-shadow 0.2s;
+        }
+
+        #versions-table a:hover {
+            color: #c8ff62;
+            text-shadow: 0 0 8px rgba(184, 255, 61, 0.3);
+        }
+
+        .availability-missing {
+            color: #6b7482;
+            font-style: italic;
+            font-size: 14px;
+        }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 700px) {
             header {
@@ -623,6 +713,14 @@
             .screenshot-grid {
                 grid-template-columns: 1fr 1fr;
             }
+            #downloads {
+                padding: 16px;
+            }
+            #versions-table th,
+            #versions-table td {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -643,6 +741,13 @@
             }
             .screenshot-grid {
                 grid-template-columns: 1fr;
+            }
+            #versions-table {
+                font-size: 12px;
+            }
+            #versions-table th,
+            #versions-table td {
+                padding: 8px 10px;
             }
         }
 
@@ -705,8 +810,9 @@
                         </p>
                     </div>
 
-                    <a href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/download/v0.1/zombase_pre-alpha0.1.exe" class="download-btn" download>
-                        Download ZomBASE (Pre-Alpha)
+                    <!-- Link do sekcji z wyborem wersji -->
+                    <a href="#downloads" class="download-btn">
+                        Zainstaluj ZomBASE
                     </a>
                 </div>
             </div>
@@ -739,6 +845,29 @@
                     </div>
                 </div>
             </div>
+
+            <!-- ===== DOWNLOAD VERSIONS SECTION ===== -->
+            <section id="downloads">
+                <h2>Wybierz wersję</h2>
+                <p class="sub">Wybierz system operacyjny i pobierz wybraną wersję gry. Jeżeli dany system nie jest dostępny, wyświetli się odpowiednia informacja.</p>
+
+                <div class="table-container">
+                    <table id="versions-table">
+                        <thead>
+                            <tr>
+                                <th>Wersja</th>
+                                <th>Windows</th>
+                                <th>Linux</th>
+                                <th>macOS</th>
+                                <th>Changelog</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Wiersze zostaną wstawione dynamicznie -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
             <!-- ===== BACK LINK ===== -->
             <a href="index.html" class="back-link">
@@ -804,7 +933,6 @@
             const lightboxNext = document.getElementById('lightboxNext');
             const lightboxCounter = document.getElementById('lightboxCounter');
 
-            // Collect all screenshot items that have an image (skip placeholders without img)
             const items = Array.from(document.querySelectorAll('.screenshot-grid .item'));
             const imageItems = items.filter(item => item.querySelector('img') !== null);
             const imageSources = imageItems.map(item => item.querySelector('img').src);
@@ -823,7 +951,6 @@
                 lightbox.classList.add('open');
                 isOpen = true;
                 document.body.style.overflow = 'hidden';
-                // Preload adjacent images
                 preloadAdjacent();
             }
 
@@ -831,12 +958,6 @@
                 lightbox.classList.remove('open');
                 isOpen = false;
                 document.body.style.overflow = '';
-                // Delay clearing src to avoid flash
-                setTimeout(() => {
-                    if (!isOpen) {
-                        // keep src for smooth transition
-                    }
-                }, 300);
             }
 
             function goTo(index) {
@@ -872,7 +993,6 @@
             }
 
             function preloadAdjacent() {
-                // Preload next and previous images for smoother navigation
                 const indices = [currentIndex - 1, currentIndex + 1];
                 indices.forEach(i => {
                     if (i >= 0 && i < imageSources.length) {
@@ -882,9 +1002,7 @@
                 });
             }
 
-            // --- Event listeners ---
-
-            // Click on screenshot item
+            // Event listeners
             imageItems.forEach((item, idx) => {
                 item.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -892,20 +1010,17 @@
                 });
             });
 
-            // Close on overlay click (click on lightbox background)
             lightbox.addEventListener('click', (e) => {
                 if (e.target === lightbox) {
                     closeLightbox();
                 }
             });
 
-            // Close button
             lightboxClose.addEventListener('click', (e) => {
                 e.stopPropagation();
                 closeLightbox();
             });
 
-            // Navigation buttons
             lightboxPrev.addEventListener('click', (e) => {
                 e.stopPropagation();
                 goPrev();
@@ -916,7 +1031,6 @@
                 goNext();
             });
 
-            // Keyboard shortcuts
             document.addEventListener('keydown', (e) => {
                 if (!isOpen) return;
                 if (e.key === 'Escape') {
@@ -931,7 +1045,6 @@
                 }
             });
 
-            // Touch swipe support for mobile
             let touchStartX = 0;
             let touchStartY = 0;
             lightbox.addEventListener('touchstart', (e) => {
@@ -945,7 +1058,6 @@
                 const touch = e.touches[0];
                 const deltaX = touch.clientX - touchStartX;
                 const deltaY = touch.clientY - touchStartY;
-                // Only trigger if horizontal swipe is dominant
                 if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 40) {
                     if (deltaX > 0) {
                         goPrev();
@@ -957,20 +1069,114 @@
                 }
             }, { passive: true });
 
-            // Prevent lightbox content click from closing
             document.getElementById('lightboxContent').addEventListener('click', (e) => {
                 e.stopPropagation();
             });
 
-            // --- Handle broken images gracefully ---
             lightboxImg.addEventListener('error', () => {
                 lightboxImg.src = '';
                 lightboxImg.alt = 'Image could not be loaded';
             });
 
-            // --- Close lightbox when window resizes beyond a threshold? Not needed, but ensure it stays responsive.
-
             console.log('🔍 ZomBASE lightbox ready — click screenshots to zoom!');
+        })();
+    </script>
+
+    <!-- ===== DOWNLOAD VERSIONS SCRIPT (XMLHttpRequest, timeout, niezawodny) ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            function loadVersions() {
+                const tbody = document.querySelector('#versions-table tbody');
+                tbody.innerHTML = '<tr><td colspan="5">Ładowanie wersji...</td></tr>';
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', 'zombase/versions.json', true);
+                xhr.timeout = 5000; // 5 sekund – po tym czasie żądanie zostanie przerwane
+
+                xhr.onload = function() {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        try {
+                            const data = JSON.parse(xhr.responseText);
+                            const versions = Array.isArray(data) ? data : (data.versions || []);
+                            
+                            if (!Array.isArray(versions) || versions.length === 0) {
+                                tbody.innerHTML = '<tr><td colspan="5">Brak dostępnych wersji w pliku JSON.</td></tr>';
+                                return;
+                            }
+
+                            tbody.innerHTML = '';
+                            versions.forEach(version => {
+                                const row = document.createElement('tr');
+                                
+                                const cellVersion = document.createElement('td');
+                                cellVersion.textContent = version.name || 'Nieznana wersja';
+                                row.appendChild(cellVersion);
+
+                                function createDownloadCell(link) {
+                                    const cell = document.createElement('td');
+                                    if (link && link.trim() !== '') {
+                                        const a = document.createElement('a');
+                                        a.href = link;
+                                        a.textContent = 'Download';
+                                        a.target = '_blank';
+                                        a.rel = 'noopener noreferrer';
+                                        cell.appendChild(a);
+                                    } else {
+                                        const span = document.createElement('span');
+                                        span.className = 'availability-missing';
+                                        span.textContent = 'Niedostępny';
+                                        cell.appendChild(span);
+                                    }
+                                    return cell;
+                                }
+
+                                row.appendChild(createDownloadCell(version.windows));
+                                row.appendChild(createDownloadCell(version.linux));
+                                row.appendChild(createDownloadCell(version.macos));
+
+                                const cellChangelog = document.createElement('td');
+                                if (version.changelog && version.changelog.trim() !== '') {
+                                    const a = document.createElement('a');
+                                    a.href = version.changelog;
+                                    a.textContent = 'Zobacz zmiany';
+                                    a.target = '_blank';
+                                    a.rel = 'noopener noreferrer';
+                                    cellChangelog.appendChild(a);
+                                } else {
+                                    const span = document.createElement('span');
+                                    span.className = 'availability-missing';
+                                    span.textContent = 'Brak';
+                                    cellChangelog.appendChild(span);
+                                }
+                                row.appendChild(cellChangelog);
+
+                                tbody.appendChild(row);
+                            });
+
+                            console.log(`✔ Załadowano ${versions.length} wersji.`);
+                        } catch (e) {
+                            console.error('Błąd parsowania JSON:', e);
+                            tbody.innerHTML = '<tr><td colspan="5">Plik versions.json jest niepoprawny. Sprawdź jego składnię.</td></tr>';
+                        }
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="5">Błąd HTTP ' + xhr.status + ' podczas ładowania wersji.</td></tr>';
+                    }
+                };
+
+                xhr.onerror = function() {
+                    tbody.innerHTML = '<tr><td colspan="5">Błąd sieci. Nie udało się załadować versions.json.</td></tr>';
+                };
+
+                xhr.ontimeout = function() {
+                    tbody.innerHTML = '<tr><td colspan="5">Przekroczono czas ładowania. Sprawdź połączenie z serwerem.</td></tr>';
+                };
+
+                xhr.send();
+            }
+
+            document.addEventListener('DOMContentLoaded', loadVersions);
         })();
     </script>
 
