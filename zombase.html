@@ -10,10 +10,23 @@
     <link rel="icon" href="logo.png" type="image/png" />
     <link rel="apple-touch-icon" href="logo.png" />
 
-    <!-- Fonts: loaded asynchronously to prevent blocking -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <!-- ===== FONTY ŁADOWANE DOPIERO PO ZDARZENIU 'load' ===== -->
+    <script>
+        (function() {
+            function loadFonts() {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href =
+                    'https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap';
+                document.head.appendChild(link);
+            }
+            if (document.readyState === 'complete') {
+                loadFonts();
+            } else {
+                window.addEventListener('load', loadFonts);
+            }
+        })();
+    </script>
     <noscript>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" />
     </noscript>
@@ -810,9 +823,9 @@
                         </p>
                     </div>
 
-                    <!-- Link do sekcji z wyborem wersji -->
+                    <!-- Link to the version selection section -->
                     <a href="#downloads" class="download-btn">
-                        Zainstaluj ZomBASE
+                        Download ZomBASE
                     </a>
                 </div>
             </div>
@@ -848,14 +861,14 @@
 
             <!-- ===== DOWNLOAD VERSIONS SECTION ===== -->
             <section id="downloads">
-                <h2>Wybierz wersję</h2>
-                <p class="sub">Wybierz system operacyjny i pobierz wybraną wersję gry. Jeżeli dany system nie jest dostępny, wyświetli się odpowiednia informacja.</p>
+                <h2>Select version</h2>
+                <p class="sub">Select your operating system and download the desired version. If a system is not available, a notification will appear.</p>
 
                 <div class="table-container">
                     <table id="versions-table">
                         <thead>
                             <tr>
-                                <th>Wersja</th>
+                                <th>Version</th>
                                 <th>Windows</th>
                                 <th>Linux</th>
                                 <th>macOS</th>
@@ -863,7 +876,21 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Wiersze zostaną wstawione dynamicznie -->
+                            <!-- ===== HARDCODED ROWS – NO JSON, NO JAVASCRIPT GENERATION ===== -->
+                            <tr>
+                                <td>Alpha v0.2</td>
+                                <td><a href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/download/v0.2.0-alpha/ZomBase-setup.exe" target="_blank" rel="noopener noreferrer">Download</a></td>
+                                <td><span class="availability-missing">Not available</span></td>
+                                <td><span class="availability-missing">Not available</span></td>
+                                <td><a href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/tag/v0.2.0-alpha" target="_blank" rel="noopener noreferrer">Changelog</a></td>
+                            </tr>
+                            <tr>
+                                <td>Alpha v0.1</td>
+                                <td><a href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/download/v0.1.0-alpha/zombase_pre-alpha0.1.exe" target="_blank" rel="noopener noreferrer">Download</a></td>
+                                <td><span class="availability-missing">Not available</span></td>
+                                <td><span class="availability-missing">Not available</span></td>
+                                <td><a href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/tag/v0.1.0-alpha" target="_blank" rel="noopener noreferrer">Changelog</a></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -925,258 +952,158 @@
                 }, 300);
             }, { passive: true });
 
-            // --- LIGHTBOX ---
-            const lightbox = document.getElementById('lightbox');
-            const lightboxImg = document.getElementById('lightboxImg');
-            const lightboxClose = document.getElementById('lightboxClose');
-            const lightboxPrev = document.getElementById('lightboxPrev');
-            const lightboxNext = document.getElementById('lightboxNext');
-            const lightboxCounter = document.getElementById('lightboxCounter');
+            // --- LIGHTBOX - uruchamiamy dopiero po załadowaniu strony ---
+            function initLightbox() {
+                const lightbox = document.getElementById('lightbox');
+                const lightboxImg = document.getElementById('lightboxImg');
+                const lightboxClose = document.getElementById('lightboxClose');
+                const lightboxPrev = document.getElementById('lightboxPrev');
+                const lightboxNext = document.getElementById('lightboxNext');
+                const lightboxCounter = document.getElementById('lightboxCounter');
 
-            const items = Array.from(document.querySelectorAll('.screenshot-grid .item'));
-            const imageItems = items.filter(item => item.querySelector('img') !== null);
-            const imageSources = imageItems.map(item => item.querySelector('img').src);
-            const imageAlts = imageItems.map(item => item.querySelector('img').alt || 'Screenshot');
+                const items = Array.from(document.querySelectorAll('.screenshot-grid .item'));
+                const imageItems = items.filter(item => item.querySelector('img') !== null);
+                const imageSources = imageItems.map(item => item.querySelector('img').src);
+                const imageAlts = imageItems.map(item => item.querySelector('img').alt || 'Screenshot');
 
-            let currentIndex = 0;
-            let isOpen = false;
+                let currentIndex = 0;
+                let isOpen = false;
 
-            function openLightbox(index) {
-                if (imageSources.length === 0) return;
-                currentIndex = Math.min(Math.max(index, 0), imageSources.length - 1);
-                lightboxImg.src = imageSources[currentIndex];
-                lightboxImg.alt = imageAlts[currentIndex] || 'Screenshot';
-                updateCounter();
-                updateNavButtons();
-                lightbox.classList.add('open');
-                isOpen = true;
-                document.body.style.overflow = 'hidden';
-                preloadAdjacent();
-            }
-
-            function closeLightbox() {
-                lightbox.classList.remove('open');
-                isOpen = false;
-                document.body.style.overflow = '';
-            }
-
-            function goTo(index) {
-                if (index < 0 || index >= imageSources.length) return;
-                currentIndex = index;
-                lightboxImg.src = imageSources[currentIndex];
-                lightboxImg.alt = imageAlts[currentIndex] || 'Screenshot';
-                updateCounter();
-                updateNavButtons();
-                preloadAdjacent();
-            }
-
-            function goPrev() {
-                if (currentIndex > 0) goTo(currentIndex - 1);
-            }
-
-            function goNext() {
-                if (currentIndex < imageSources.length - 1) goTo(currentIndex + 1);
-            }
-
-            function updateCounter() {
-                if (imageSources.length > 1) {
-                    lightboxCounter.textContent = `${currentIndex + 1} / ${imageSources.length}`;
-                    lightboxCounter.style.display = 'block';
-                } else {
-                    lightboxCounter.style.display = 'none';
+                function openLightbox(index) {
+                    if (imageSources.length === 0) return;
+                    currentIndex = Math.min(Math.max(index, 0), imageSources.length - 1);
+                    lightboxImg.src = imageSources[currentIndex];
+                    lightboxImg.alt = imageAlts[currentIndex] || 'Screenshot';
+                    updateCounter();
+                    updateNavButtons();
+                    lightbox.classList.add('open');
+                    isOpen = true;
+                    document.body.style.overflow = 'hidden';
                 }
-            }
 
-            function updateNavButtons() {
-                lightboxPrev.classList.toggle('hidden', currentIndex === 0);
-                lightboxNext.classList.toggle('hidden', currentIndex === imageSources.length - 1);
-            }
-
-            function preloadAdjacent() {
-                const indices = [currentIndex - 1, currentIndex + 1];
-                indices.forEach(i => {
-                    if (i >= 0 && i < imageSources.length) {
-                        const img = new Image();
-                        img.src = imageSources[i];
-                    }
-                });
-            }
-
-            // Event listeners
-            imageItems.forEach((item, idx) => {
-                item.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    openLightbox(idx);
-                });
-            });
-
-            lightbox.addEventListener('click', (e) => {
-                if (e.target === lightbox) {
-                    closeLightbox();
+                function closeLightbox() {
+                    lightbox.classList.remove('open');
+                    isOpen = false;
+                    document.body.style.overflow = '';
                 }
-            });
 
-            lightboxClose.addEventListener('click', (e) => {
-                e.stopPropagation();
-                closeLightbox();
-            });
-
-            lightboxPrev.addEventListener('click', (e) => {
-                e.stopPropagation();
-                goPrev();
-            });
-
-            lightboxNext.addEventListener('click', (e) => {
-                e.stopPropagation();
-                goNext();
-            });
-
-            document.addEventListener('keydown', (e) => {
-                if (!isOpen) return;
-                if (e.key === 'Escape') {
-                    closeLightbox();
-                    e.preventDefault();
-                } else if (e.key === 'ArrowLeft') {
-                    goPrev();
-                    e.preventDefault();
-                } else if (e.key === 'ArrowRight') {
-                    goNext();
-                    e.preventDefault();
+                function goTo(index) {
+                    if (index < 0 || index >= imageSources.length) return;
+                    currentIndex = index;
+                    lightboxImg.src = imageSources[currentIndex];
+                    lightboxImg.alt = imageAlts[currentIndex] || 'Screenshot';
+                    updateCounter();
+                    updateNavButtons();
                 }
-            });
 
-            let touchStartX = 0;
-            let touchStartY = 0;
-            lightbox.addEventListener('touchstart', (e) => {
-                const touch = e.touches[0];
-                touchStartX = touch.clientX;
-                touchStartY = touch.clientY;
-            }, { passive: true });
+                function goPrev() {
+                    if (currentIndex > 0) goTo(currentIndex - 1);
+                }
 
-            lightbox.addEventListener('touchmove', (e) => {
-                if (!isOpen) return;
-                const touch = e.touches[0];
-                const deltaX = touch.clientX - touchStartX;
-                const deltaY = touch.clientY - touchStartY;
-                if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 40) {
-                    if (deltaX > 0) {
-                        goPrev();
+                function goNext() {
+                    if (currentIndex < imageSources.length - 1) goTo(currentIndex + 1);
+                }
+
+                function updateCounter() {
+                    if (imageSources.length > 1) {
+                        lightboxCounter.textContent = currentIndex + 1 + ' / ' + imageSources.length;
+                        lightboxCounter.style.display = 'block';
                     } else {
-                        goNext();
+                        lightboxCounter.style.display = 'none';
                     }
+                }
+
+                function updateNavButtons() {
+                    lightboxPrev.classList.toggle('hidden', currentIndex === 0);
+                    lightboxNext.classList.toggle('hidden', currentIndex === imageSources.length - 1);
+                }
+
+                // Event listeners
+                imageItems.forEach((item, idx) => {
+                    item.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        openLightbox(idx);
+                    });
+                });
+
+                lightbox.addEventListener('click', (e) => {
+                    if (e.target === lightbox) {
+                        closeLightbox();
+                    }
+                });
+
+                lightboxClose.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    closeLightbox();
+                });
+
+                lightboxPrev.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    goPrev();
+                });
+
+                lightboxNext.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    goNext();
+                });
+
+                document.addEventListener('keydown', (e) => {
+                    if (!isOpen) return;
+                    if (e.key === 'Escape') {
+                        closeLightbox();
+                        e.preventDefault();
+                    } else if (e.key === 'ArrowLeft') {
+                        goPrev();
+                        e.preventDefault();
+                    } else if (e.key === 'ArrowRight') {
+                        goNext();
+                        e.preventDefault();
+                    }
+                });
+
+                let touchStartX = 0;
+                let touchStartY = 0;
+                lightbox.addEventListener('touchstart', (e) => {
+                    const touch = e.touches[0];
                     touchStartX = touch.clientX;
                     touchStartY = touch.clientY;
-                }
-            }, { passive: true });
+                }, { passive: true });
 
-            document.getElementById('lightboxContent').addEventListener('click', (e) => {
-                e.stopPropagation();
-            });
-
-            lightboxImg.addEventListener('error', () => {
-                lightboxImg.src = '';
-                lightboxImg.alt = 'Image could not be loaded';
-            });
-
-            console.log('🔍 ZomBASE lightbox ready — click screenshots to zoom!');
-        })();
-    </script>
-
-    <!-- ===== DOWNLOAD VERSIONS SCRIPT (XMLHttpRequest, timeout, niezawodny) ===== -->
-    <script>
-        (function() {
-            'use strict';
-
-            function loadVersions() {
-                const tbody = document.querySelector('#versions-table tbody');
-                tbody.innerHTML = '<tr><td colspan="5">Ładowanie wersji...</td></tr>';
-
-                const xhr = new XMLHttpRequest();
-                xhr.open('GET', 'zombase/versions.json', true);
-                xhr.timeout = 5000; // 5 sekund – po tym czasie żądanie zostanie przerwane
-
-                xhr.onload = function() {
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        try {
-                            const data = JSON.parse(xhr.responseText);
-                            const versions = Array.isArray(data) ? data : (data.versions || []);
-                            
-                            if (!Array.isArray(versions) || versions.length === 0) {
-                                tbody.innerHTML = '<tr><td colspan="5">Brak dostępnych wersji w pliku JSON.</td></tr>';
-                                return;
-                            }
-
-                            tbody.innerHTML = '';
-                            versions.forEach(version => {
-                                const row = document.createElement('tr');
-                                
-                                const cellVersion = document.createElement('td');
-                                cellVersion.textContent = version.name || 'Nieznana wersja';
-                                row.appendChild(cellVersion);
-
-                                function createDownloadCell(link) {
-                                    const cell = document.createElement('td');
-                                    if (link && link.trim() !== '') {
-                                        const a = document.createElement('a');
-                                        a.href = link;
-                                        a.textContent = 'Download';
-                                        a.target = '_blank';
-                                        a.rel = 'noopener noreferrer';
-                                        cell.appendChild(a);
-                                    } else {
-                                        const span = document.createElement('span');
-                                        span.className = 'availability-missing';
-                                        span.textContent = 'Niedostępny';
-                                        cell.appendChild(span);
-                                    }
-                                    return cell;
-                                }
-
-                                row.appendChild(createDownloadCell(version.windows));
-                                row.appendChild(createDownloadCell(version.linux));
-                                row.appendChild(createDownloadCell(version.macos));
-
-                                const cellChangelog = document.createElement('td');
-                                if (version.changelog && version.changelog.trim() !== '') {
-                                    const a = document.createElement('a');
-                                    a.href = version.changelog;
-                                    a.textContent = 'Zobacz zmiany';
-                                    a.target = '_blank';
-                                    a.rel = 'noopener noreferrer';
-                                    cellChangelog.appendChild(a);
-                                } else {
-                                    const span = document.createElement('span');
-                                    span.className = 'availability-missing';
-                                    span.textContent = 'Brak';
-                                    cellChangelog.appendChild(span);
-                                }
-                                row.appendChild(cellChangelog);
-
-                                tbody.appendChild(row);
-                            });
-
-                            console.log(`✔ Załadowano ${versions.length} wersji.`);
-                        } catch (e) {
-                            console.error('Błąd parsowania JSON:', e);
-                            tbody.innerHTML = '<tr><td colspan="5">Plik versions.json jest niepoprawny. Sprawdź jego składnię.</td></tr>';
+                lightbox.addEventListener('touchmove', (e) => {
+                    if (!isOpen) return;
+                    const touch = e.touches[0];
+                    const deltaX = touch.clientX - touchStartX;
+                    const deltaY = touch.clientY - touchStartY;
+                    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 40) {
+                        if (deltaX > 0) {
+                            goPrev();
+                        } else {
+                            goNext();
                         }
-                    } else {
-                        tbody.innerHTML = '<tr><td colspan="5">Błąd HTTP ' + xhr.status + ' podczas ładowania wersji.</td></tr>';
+                        touchStartX = touch.clientX;
+                        touchStartY = touch.clientY;
                     }
-                };
+                }, { passive: true });
 
-                xhr.onerror = function() {
-                    tbody.innerHTML = '<tr><td colspan="5">Błąd sieci. Nie udało się załadować versions.json.</td></tr>';
-                };
+                document.getElementById('lightboxContent').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
 
-                xhr.ontimeout = function() {
-                    tbody.innerHTML = '<tr><td colspan="5">Przekroczono czas ładowania. Sprawdź połączenie z serwerem.</td></tr>';
-                };
+                lightboxImg.addEventListener('error', () => {
+                    lightboxImg.src = '';
+                    lightboxImg.alt = 'Image could not be loaded';
+                });
 
-                xhr.send();
+                console.log('🔍 ZomBASE lightbox ready — click screenshots to zoom!');
             }
 
-            document.addEventListener('DOMContentLoaded', loadVersions);
+            // Uruchamiamy lightbox dopiero po całkowitym załadowaniu strony
+            if (document.readyState === 'complete') {
+                initLightbox();
+            } else {
+                window.addEventListener('load', initLightbox);
+            }
+
         })();
     </script>
 
