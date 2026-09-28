@@ -10,6 +10,9 @@
     <link rel="icon" href="logo.png" type="image/png" />
     <link rel="apple-touch-icon" href="logo.png" />
 
+    <!-- ===== FONT AWESOME 6 (ikony marek: Windows, Linux, Apple) ===== -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+
     <!-- ===== FONTY ŁADOWANE DOPIERO PO ZDARZENIU 'load' ===== -->
     <script>
         (function() {
@@ -281,26 +284,164 @@
             color: var(--text);
         }
 
-        .download-btn {
-            display: inline-flex;
+        /* ===== DOWNLOAD SECTION ===== */
+        .download-section {
+            margin-top: 28px;
+        }
+
+        .download-label {
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--muted);
+            margin-bottom: 14px;
+            display: flex;
             align-items: center;
             gap: 10px;
-            padding: 16px 32px;
+        }
+
+        .download-label::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, var(--border), transparent);
+        }
+
+        .download-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .os-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 24px;
             border-radius: 14px;
             background: var(--accent);
             color: #0a0c10;
+            font-family: inherit;
             font-weight: 800;
-            font-size: 16px;
-            border: none;
+            font-size: 15px;
+            letter-spacing: -0.01em;
+            line-height: 1;
+            border: 1px solid transparent;
             text-decoration: none;
-            transition: transform 0.25s, box-shadow 0.25s;
             cursor: pointer;
+            white-space: nowrap;
+            transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                        box-shadow 0.25s,
+                        background 0.25s,
+                        color 0.25s,
+                        border-color 0.25s;
         }
 
-        .download-btn:hover {
+        .os-btn i {
+            font-size: 1.15em;
+            line-height: 1;
+            display: inline-block;
+        }
+
+        .os-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 12px 40px rgba(184, 255, 61, 0.25);
             background: #c8ff62;
+        }
+
+        .os-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .os-btn:focus-visible {
+            outline: 2px solid var(--accent-2);
+            outline-offset: 3px;
+        }
+
+        /* Niedostępne platformy */
+        .os-btn.unavailable {
+            background: rgba(255, 255, 255, 0.035);
+            color: var(--muted);
+            border-color: var(--border);
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .os-btn.unavailable:hover {
+            transform: none;
+            box-shadow: none;
+            background: rgba(255, 255, 255, 0.055);
+            color: #b7c0cd;
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .versions-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--muted);
+            text-decoration: none;
+            transition: color 0.25s;
+        }
+
+        .versions-link .arrow {
+            display: inline-block;
+            transition: transform 0.25s;
+        }
+
+        .versions-link:hover {
+            color: var(--accent);
+        }
+
+        .versions-link:hover .arrow {
+            transform: translateX(4px);
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 34px;
+            transform: translateX(-50%) translateY(24px);
+            z-index: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 13px 22px;
+            border-radius: 14px;
+            background: rgba(20, 24, 30, 0.94);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            box-shadow: 0 16px 50px rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            max-width: calc(100vw - 32px);
+            text-align: center;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+            box-shadow: 0 0 10px rgba(184, 255, 61, 0.6);
         }
 
         /* ===== SCREENSHOTS ===== */
@@ -628,6 +769,7 @@
             border: 1px solid var(--border);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
+            scroll-margin-top: 100px;
         }
 
         #downloads h2 {
@@ -748,9 +890,12 @@
             .brand-logo {
                 height: 28px;
             }
-            .download-btn {
+            .download-buttons {
+                flex-direction: column;
+            }
+            .os-btn {
                 width: 100%;
-                justify-content: center;
+                padding: 14px 18px;
             }
             .screenshot-grid {
                 grid-template-columns: 1fr;
@@ -823,10 +968,47 @@
                         </p>
                     </div>
 
-                    <!-- Link to the version selection section -->
-                    <a href="#downloads" class="download-btn">
-                        Download ZomBASE
-                    </a>
+                    <!-- ===== DOWNLOAD SECTION ===== -->
+                    <div class="download-section">
+                        <div class="download-label">Download Latest for:</div>
+
+                        <div class="download-buttons">
+
+                            <!-- WINDOWS -->
+                            <a class="os-btn"
+                               href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/latest/download/ZomBase.exe"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               aria-label="Download ZomBASE for Windows">
+                                <i class="fa-brands fa-windows" aria-hidden="true"></i>
+                                <span>Windows</span>
+                            </a>
+
+                            <button type="button"
+                                    class="os-btn unavailable"
+                                    data-os="Linux"
+                                    aria-label="Linux version not available yet"
+                                    title="Linux version not available yet">
+                                <i class="fa-brands fa-linux" aria-hidden="true"></i>
+                                <span>Linux</span>
+                            </button>
+
+                            <button type="button"
+                                    class="os-btn unavailable"
+                                    data-os="macOS"
+                                    aria-label="macOS version not available yet"
+                                    title="macOS version not available yet">
+                                <i class="fa-brands fa-apple" aria-hidden="true"></i>
+                                <span>macOS</span>
+                            </button>
+
+                        </div>
+
+                        <a href="#downloads" class="versions-link">
+                            Looking for older versions? See all previous releases
+                            <span class="arrow">→</span>
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -877,6 +1059,27 @@
                         </thead>
                         <tbody>
                             <!-- ===== HARDCODED ROWS – NO JSON, NO JAVASCRIPT GENERATION ===== -->
+                             <tr>
+                                <td>Test 0.0.3</td>
+                                <td><a href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/download/Test-0.0.3/ZomBase.exe" target="_blank" rel="noopener noreferrer">Download</a></td>
+                                <td><span class="availability-missing">Not available</span></td>
+                                <td><span class="availability-missing">Not available</span></td>
+                                <td><a href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/tag/Test-0.0.3" target="_blank" rel="noopener noreferrer">Changelog</a></td>
+                            </tr>
+                            <tr>
+                                <td>Test 0.0.2</td>
+                                <td><a href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/download/Test-0.0.2/ZomBase.exe" target="_blank" rel="noopener noreferrer">Download</a></td>
+                                <td><span class="availability-missing">Not available</span></td>
+                                <td><span class="availability-missing">Not available</span></td>
+                                <td><a href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/tag/Test-0.0.2" target="_blank" rel="noopener noreferrer">Changelog</a></td>
+                            </tr>
+                            <tr>
+                                <td>Test 0.0.1</td>
+                                <td><a href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/download/Test/ZomBase.exe" target="_blank" rel="noopener noreferrer">Download</a></td>
+                                <td><span class="availability-missing">Not available</span></td>
+                                <td><span class="availability-missing">Not available</span></td>
+                                <td><a href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/tag/Test" target="_blank" rel="noopener noreferrer">Changelog</a></td>
+                            </tr>
                             <tr>
                                 <td>Alpha v0.2</td>
                                 <td><a href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/download/v0.2.0-alpha/ZomBase-setup.exe" target="_blank" rel="noopener noreferrer">Download</a></td>
@@ -915,6 +1118,12 @@
         </div>
     </div>
 
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast" role="status" aria-live="polite">
+        <span class="dot"></span>
+        <span id="toastText"></span>
+    </div>
+
     <!-- ===== FOOTER ===== -->
     <footer>
         <span>© 2026 <a href="index.html">Udead Pixels</a></span>
@@ -951,6 +1160,27 @@
                     glow.style.opacity = '0';
                 }, 300);
             }, { passive: true });
+
+            // --- TOAST (dla niedostępnych platform) ---
+            const toast = document.getElementById('toast');
+            const toastText = document.getElementById('toastText');
+            let toastTimeout;
+
+            function showToast(message) {
+                toastText.textContent = message;
+                toast.classList.add('show');
+                clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2800);
+            }
+
+            document.querySelectorAll('.os-btn.unavailable').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    const os = btn.dataset.os || 'This platform';
+                    showToast(os + ' version is not available yet. Check back soon!');
+                });
+            });
 
             // --- LIGHTBOX - uruchamiamy dopiero po załadowaniu strony ---
             function initLightbox() {
