@@ -1,6 +1,6 @@
 {
-  "version": "0.0.6",
-  "windows_url": "https://github.com/MateuszStolarczyk/Undead-Pixels/releases/download/Test-0.0.6/ZomBase.zip",
+  "version": "0.0.7",
+  "windows_url": "https://github.com/MateuszStolarczyk/Undead-Pixels/releases/download/Test-0.0.7/ZomBase.zip",
   "windows_exe": "ZomBase.exe",
   "background_url": "https://raw.githubusercontent.com/MateuszStolarczyk/Undead-Pixels/main/assets/Background.png",
   "background_version": "1"
