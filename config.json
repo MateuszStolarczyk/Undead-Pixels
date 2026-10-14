@@ -3,5 +3,7 @@
   "windows_url": "https://github.com/MateuszStolarczyk/Undead-Pixels/releases/download/Test-0.0.7/ZomBase.zip",
   "windows_exe": "ZomBase.exe",
   "background_url": "https://raw.githubusercontent.com/MateuszStolarczyk/Undead-Pixels/main/assets/Background.png",
-  "background_version": "1"
+  "background_version": "1",
+  "launcher_version": "1.0.1",
+  "launcher_windows_url": "https://raw.githubusercontent.com/MateuszStolarczyk/Undead-Pixels/main/UndeadPlay-v1.0.1/UndeadPlay.exe"
 }
