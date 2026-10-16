@@ -377,31 +377,6 @@
             border-color: rgba(255, 255, 255, 0.12);
         }
 
-        .versions-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 16px;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--muted);
-            text-decoration: none;
-            transition: color 0.25s;
-        }
-
-        .versions-link .arrow {
-            display: inline-block;
-            transition: transform 0.25s;
-        }
-
-        .versions-link:hover {
-            color: var(--accent);
-        }
-
-        .versions-link:hover .arrow {
-            transform: translateX(4px);
-        }
-
         /* ===== TOAST ===== */
         .toast {
             position: fixed;
@@ -760,93 +735,6 @@
             color: var(--text);
         }
 
-        /* ===== DOWNLOAD TABLE ===== */
-        #downloads {
-            margin-top: 60px;
-            padding: 20px;
-            background: rgba(18, 22, 28, 0.60);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            scroll-margin-top: 100px;
-        }
-
-        #downloads h2 {
-            font-size: clamp(28px, 4vw, 40px);
-            font-weight: 900;
-            letter-spacing: -0.03em;
-            margin-bottom: 8px;
-            color: var(--text);
-        }
-
-        #downloads .sub {
-            color: var(--muted);
-            margin-bottom: 24px;
-        }
-
-        .table-container {
-            overflow-x: auto;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            background: rgba(0, 0, 0, 0.25);
-        }
-
-        #versions-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 15px;
-            color: var(--text);
-        }
-
-        #versions-table thead {
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-        }
-
-        #versions-table th {
-            padding: 14px 18px;
-            text-align: left;
-            font-weight: 700;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--muted);
-            border-bottom: 1px solid var(--border);
-        }
-
-        #versions-table td {
-            padding: 14px 18px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-        }
-
-        #versions-table tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        #versions-table tbody tr:hover {
-            background: rgba(184, 255, 61, 0.03);
-        }
-
-        #versions-table a {
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.2s, text-shadow 0.2s;
-        }
-
-        #versions-table a:hover {
-            color: #c8ff62;
-            text-shadow: 0 0 8px rgba(184, 255, 61, 0.3);
-        }
-
-        .availability-missing {
-            color: #6b7482;
-            font-style: italic;
-            font-size: 14px;
-        }
-
         /* ===== RESPONSIVE ===== */
         @media (max-width: 700px) {
             header {
@@ -867,14 +755,6 @@
             }
             .screenshot-grid {
                 grid-template-columns: 1fr 1fr;
-            }
-            #downloads {
-                padding: 16px;
-            }
-            #versions-table th,
-            #versions-table td {
-                padding: 10px 12px;
-                font-size: 13px;
             }
         }
 
@@ -899,13 +779,6 @@
             }
             .screenshot-grid {
                 grid-template-columns: 1fr;
-            }
-            #versions-table {
-                font-size: 12px;
-            }
-            #versions-table th,
-            #versions-table td {
-                padding: 8px 10px;
             }
         }
 
@@ -970,16 +843,16 @@
 
                     <!-- ===== DOWNLOAD SECTION ===== -->
                     <div class="download-section">
-                        <div class="download-label">Download Latest for:</div>
+                        <div class="download-label">Download UndeadPlay for:</div>
 
                         <div class="download-buttons">
 
                             <!-- WINDOWS -->
                             <a class="os-btn"
-                               href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/latest/download/ZomBase.exe"
+                               href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/download/UndeadPlay-v1.0.1/UndeadPlay.exe"
                                target="_blank"
                                rel="noopener noreferrer"
-                               aria-label="Download ZomBASE for Windows">
+                               aria-label="Download UndeadPlay for Windows">
                                 <i class="fa-brands fa-windows" aria-hidden="true"></i>
                                 <span>Windows</span>
                             </a>
@@ -1003,11 +876,6 @@
                             </button>
 
                         </div>
-
-                        <a href="#downloads" class="versions-link">
-                            Looking for older versions? See all previous releases
-                            <span class="arrow">→</span>
-                        </a>
                     </div>
                 </div>
             </div>
@@ -1040,64 +908,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- ===== DOWNLOAD VERSIONS SECTION ===== -->
-            <section id="downloads">
-                <h2>Select version</h2>
-                <p class="sub">Select your operating system and download the desired version. If a system is not available, a notification will appear.</p>
-
-                <div class="table-container">
-                    <table id="versions-table">
-                        <thead>
-                            <tr>
-                                <th>Version</th>
-                                <th>Windows</th>
-                                <th>Linux</th>
-                                <th>macOS</th>
-                                <th>Changelog</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- ===== HARDCODED ROWS – NO JSON, NO JAVASCRIPT GENERATION ===== -->
-                             <tr>
-                                <td>Test 0.0.3</td>
-                                <td><a href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/download/Test-0.0.3/ZomBase.exe" target="_blank" rel="noopener noreferrer">Download</a></td>
-                                <td><span class="availability-missing">Not available</span></td>
-                                <td><span class="availability-missing">Not available</span></td>
-                                <td><a href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/tag/Test-0.0.3" target="_blank" rel="noopener noreferrer">Changelog</a></td>
-                            </tr>
-                            <tr>
-                                <td>Test 0.0.2</td>
-                                <td><a href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/download/Test-0.0.2/ZomBase.exe" target="_blank" rel="noopener noreferrer">Download</a></td>
-                                <td><span class="availability-missing">Not available</span></td>
-                                <td><span class="availability-missing">Not available</span></td>
-                                <td><a href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/tag/Test-0.0.2" target="_blank" rel="noopener noreferrer">Changelog</a></td>
-                            </tr>
-                            <tr>
-                                <td>Test 0.0.1</td>
-                                <td><a href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/download/Test/ZomBase.exe" target="_blank" rel="noopener noreferrer">Download</a></td>
-                                <td><span class="availability-missing">Not available</span></td>
-                                <td><span class="availability-missing">Not available</span></td>
-                                <td><a href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/tag/Test" target="_blank" rel="noopener noreferrer">Changelog</a></td>
-                            </tr>
-                            <tr>
-                                <td>Alpha v0.2</td>
-                                <td><a href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/download/v0.2.0-alpha/ZomBase-setup.exe" target="_blank" rel="noopener noreferrer">Download</a></td>
-                                <td><span class="availability-missing">Not available</span></td>
-                                <td><span class="availability-missing">Not available</span></td>
-                                <td><a href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/tag/v0.2.0-alpha" target="_blank" rel="noopener noreferrer">Changelog</a></td>
-                            </tr>
-                            <tr>
-                                <td>Alpha v0.1</td>
-                                <td><a href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/download/v0.1.0-alpha/zombase_pre-alpha0.1.exe" target="_blank" rel="noopener noreferrer">Download</a></td>
-                                <td><span class="availability-missing">Not available</span></td>
-                                <td><span class="availability-missing">Not available</span></td>
-                                <td><a href="https://github.com/MateuszStolarczyk/Undead-Pixels/releases/tag/v0.1.0-alpha" target="_blank" rel="noopener noreferrer">Changelog</a></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
 
             <!-- ===== BACK LINK ===== -->
             <a href="index.html" class="back-link">
